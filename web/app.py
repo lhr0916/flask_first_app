@@ -1,10 +1,12 @@
-from flask import Flask, json, jsonify, render_template
+from flask import Flask, json, jsonify, render_template, request
 from bson import json_util
-from pymongo import MongoClient
 from datetime import datetime
+from urlparse import urlparse, parse_qs
+
+from pymongo import MongoClient
 
 app = Flask(__name__)
-client = MongoClient("mongodb://fra01.kb.com:27017")
+client = MongoClient("mongodb://t01.b.com:27017")
 db = client.mydb
 # db = client.test
 
@@ -31,6 +33,15 @@ def findAll():
 
     # return render_template("user.html", users=data)
     return render_template("user.html", users=json.loads(data) )
+
+@app.route('/find/<name>')
+def findByName(name):
+    data = json_util.dumps( db.member.find({
+        'name': name }) )
+
+    print(data)
+    return render_template("user.html", users=json.loads(data) )
+
 
 if __name__ == '__main__':
     port=8808
